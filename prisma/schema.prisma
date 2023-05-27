@@ -17,3 +17,11 @@ model Book {
 
   @@map("books")
 }
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  userName String @unique
+  @@map("users")
+}

@@ -1,16 +1,19 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { BookService } from './book.service'
 import { BookDTO } from './book.dto'
+import { Public } from '../auth/auth.decorator'
 
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
+  @Public()
   @Get()
   async findAll() {
     return this.bookService.findAll()
   }
 
+  @Public()
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.bookService.findOne(id)
