@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from 'src/database/prisma.service'
 import { AuthDto } from './auth.dto'
@@ -24,11 +24,11 @@ export class AuthService {
             }),
           }
         } else {
-          throw new Error('Incorrect password')
+          throw new HttpException('Incorrect password', HttpStatus.UNAUTHORIZED)
         }
       }
     } catch (error) {
-      return { error: error.message }
+      throw new HttpException(error.message, error.status)
     }
   }
 }

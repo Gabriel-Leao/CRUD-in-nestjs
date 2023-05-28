@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { UserDto } from './user.dto'
 import { PrismaService } from 'src/database/prisma.service'
 import * as bcrypt from 'bcrypt'
@@ -30,10 +30,10 @@ export class UserService {
       if (user) {
         return user
       } else {
-        throw new Error('User dot not exists')
+        throw new HttpException('User do not exists', HttpStatus.NOT_FOUND)
       }
     } catch (error) {
-      return { error: error.message }
+      throw new HttpException(error.message, error.status)
     }
   }
 
@@ -42,9 +42,15 @@ export class UserService {
       where: { email: user.email },
     })
 
+    const userName = await this.prisma.user.findUnique({
+      where: { userName: user.userName },
+    })
+
     try {
       if (email) {
-        throw new Error('Email already exists')
+        throw new HttpException('Email already exists', HttpStatus.CONFLICT)
+      } else if (userName) {
+        throw new HttpException('UserName already exists', HttpStatus.CONFLICT)
       } else {
         const { userName, email, password } = user
         const salt = bcrypt.genSaltSync(10)
@@ -60,7 +66,7 @@ export class UserService {
         return { message: 'User has been created successfully' }
       }
     } catch (error) {
-      return { error: error.message }
+      throw new HttpException(error.message, error.status)
     }
   }
 
@@ -84,10 +90,10 @@ export class UserService {
         })
         return { message: 'User has been updated successfully' }
       } else {
-        throw new Error('User do not exists')
+        throw new HttpException('User do not exists', HttpStatus.NOT_FOUND)
       }
     } catch (error) {
-      return { error: error.message }
+      throw new HttpException(error.message, error.status)
     }
   }
 
@@ -103,10 +109,10 @@ export class UserService {
         })
         return { message: 'User has been deleted successfully' }
       } else {
-        throw new Error('User do not exists')
+        throw new HttpException('User do not exists', HttpStatus.NOT_FOUND)
       }
     } catch (error) {
-      return { error: error.message }
+      throw new HttpException(error.message, error.status)
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/database/prisma.service'
 import { BookDTO } from './book.dto'
 
@@ -19,10 +19,10 @@ export class BookService {
       if (book) {
         return book
       } else {
-        throw new Error('Book does not exists')
+        throw new HttpException('Book does not exists', HttpStatus.NOT_FOUND)
       }
     } catch (error) {
-      return { error: error.message }
+      throw new HttpException(error.message, error.status)
     }
   }
 
@@ -34,7 +34,7 @@ export class BookService {
     })
     try {
       if (book) {
-        throw new Error('Book already exists')
+        throw new HttpException('Book already exists', HttpStatus.CONFLICT)
       } else {
         await this.prisma.book.create({
           data,
@@ -42,7 +42,7 @@ export class BookService {
         return { message: 'Book has been added successfully' }
       }
     } catch (error) {
-      return { error: error.message }
+      throw new HttpException(error.message, error.status)
     }
   }
 
@@ -61,10 +61,10 @@ export class BookService {
         })
         return { message: 'Book has been updated successfully' }
       } else {
-        throw new Error('Book does not exists')
+        throw new HttpException('Book does not exists', HttpStatus.NOT_FOUND)
       }
     } catch (error) {
-      return { error: error.message }
+      throw new HttpException(error.message, error.status)
     }
   }
 
@@ -80,10 +80,10 @@ export class BookService {
         })
         return { message: 'Book has been deleted successfully' }
       } else {
-        throw new Error('Book does not exists')
+        throw new HttpException('Book does not exists', HttpStatus.NOT_FOUND)
       }
     } catch (error) {
-      return { error: error.message }
+      throw new HttpException(error.message, error.status)
     }
   }
 }
