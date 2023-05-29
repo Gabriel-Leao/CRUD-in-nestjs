@@ -26,6 +26,8 @@ export class AuthService {
         } else {
           throw new HttpException('Incorrect password', HttpStatus.UNAUTHORIZED)
         }
+      } else {
+        throw new HttpException('User does not exists', HttpStatus.NOT_FOUND)
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)

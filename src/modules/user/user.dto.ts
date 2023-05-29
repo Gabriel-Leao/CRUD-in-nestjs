@@ -1,5 +1,6 @@
 import { Transform, TransformFnParams } from 'class-transformer'
 import {
+  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -33,4 +34,8 @@ export class UserDto {
   @Length(3, 15)
   @Transform(({ value }: TransformFnParams) => value?.trim())
   userName: string
+
+  @IsNotEmpty()
+  @IsBoolean()
+  isAdmin: boolean
 }

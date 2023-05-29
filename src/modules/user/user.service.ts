@@ -52,13 +52,14 @@ export class UserService {
       } else if (userName) {
         throw new HttpException('UserName already exists', HttpStatus.CONFLICT)
       } else {
-        const { userName, email, password } = user
+        const { userName, email, password, isAdmin } = user
         const salt = bcrypt.genSaltSync(10)
         const hash = bcrypt.hashSync(password, salt)
         const data = {
           email,
           userName,
           password: hash,
+          isAdmin,
         }
         await this.prisma.user.create({
           data,
