@@ -21,13 +21,21 @@ export class AuthService {
           return {
             access_token: await this.jwtService.signAsync({
               userName: user.userName,
+              role: user.role,
+              email: user.email,
             }),
           }
         } else {
-          throw new HttpException('Incorrect password', HttpStatus.UNAUTHORIZED)
+          throw new HttpException(
+            'User or password incorrect',
+            HttpStatus.UNAUTHORIZED
+          )
         }
       } else {
-        throw new HttpException('User does not exists', HttpStatus.NOT_FOUND)
+        throw new HttpException(
+          'User or password incorrect',
+          HttpStatus.NOT_FOUND
+        )
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)

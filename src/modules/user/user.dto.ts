@@ -36,6 +36,7 @@ export class UserDto {
   userName: string
 
   @IsNotEmpty()
-  @IsBoolean()
-  isAdmin: boolean
+  @Length(4, 5)
+  @IsString() 
+  role: string
 }

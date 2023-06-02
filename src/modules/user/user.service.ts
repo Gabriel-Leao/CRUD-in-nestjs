@@ -12,6 +12,7 @@ export class UserService {
       select: {
         email: true,
         userName: true,
+        role: true,
         id: true,
       },
     })
@@ -23,6 +24,8 @@ export class UserService {
       select: {
         email: true,
         userName: true,
+        role: true,
+        id: true,
       },
     })
 
@@ -42,29 +45,33 @@ export class UserService {
       where: { email: user.email },
     })
 
-    const userName = await this.prisma.user.findUnique({
-      where: { userName: user.userName },
-    })
-
     try {
-      if (email) {
-        throw new HttpException('Email already exists', HttpStatus.CONFLICT)
-      } else if (userName) {
-        throw new HttpException('UserName already exists', HttpStatus.CONFLICT)
-      } else {
-        const { userName, email, password, isAdmin } = user
-        const salt = bcrypt.genSaltSync(10)
-        const hash = bcrypt.hashSync(password, salt)
-        const data = {
-          email,
-          userName,
-          password: hash,
-          isAdmin,
-        }
-        await this.prisma.user.create({
-          data,
+      if (!email) {
+        const userName = await this.prisma.user.findUnique({
+          where: { userName: user.userName },
         })
-        return { message: 'User has been created successfully' }
+
+        if (userName) {
+          throw new HttpException(
+            'userName already in use',
+            HttpStatus.CONFLICT
+          )
+        } else {
+          const { userName, email, password, role } = user
+          const salt = bcrypt.genSaltSync(10)
+          const hash = bcrypt.hashSync(password, salt)
+          await this.prisma.user.create({
+            data: {
+              email,
+              userName,
+              password: hash,
+              role,
+            },
+          })
+          return { message: 'User has been created successfully' }
+        }
+      } else {
+        throw new HttpException('email already in use', HttpStatus.CONFLICT)
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
