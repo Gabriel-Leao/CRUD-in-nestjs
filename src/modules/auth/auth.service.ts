@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from 'src/database/prisma.service'
 import { AuthDto } from './auth.dto'
 import * as bcrypt from 'bcrypt'
+import { Request } from 'express'
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(private prisma: PrismaService) {}
 
-  async login(data: AuthDto) {
+  async login(data: AuthDto, req: Request) {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     })
@@ -18,13 +18,14 @@ export class AuthService {
         const correctPassword = bcrypt.compareSync(password, user.password)
 
         if (correctPassword) {
-          return {
-            access_token: await this.jwtService.signAsync({
-              userName: user.userName,
-              role: user.role,
-              email: user.email,
-            }),
+          req.session.user = {
+            id: user.id,
+            userName: user.userName,
+            role: user.role,
+            email: user.email,
           }
+
+          return { message: 'You have been successfully logged in.' }
         } else {
           throw new HttpException(
             'User or password incorrect',
@@ -34,7 +35,7 @@ export class AuthService {
       } else {
         throw new HttpException(
           'User or password incorrect',
-          HttpStatus.NOT_FOUND
+          HttpStatus.UNAUTHORIZED
         )
       }
     } catch (error) {
