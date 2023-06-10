@@ -15,9 +15,10 @@ export class RoleGuard implements CanActivate {
       return true
     }
     const request = context.switchToHttp().getRequest()
+    const sessionId = request.headers['x-session-id'] || request.sessionID
 
     const user = await new Promise<any>((resolve, reject) => {
-      request.sessionStore.get(request.sessionID, (error, sessionData) => {
+      request.sessionStore.get(sessionId, (error, sessionData) => {
         if (error) {
           new UnauthorizedException()
         } else if (sessionData) {

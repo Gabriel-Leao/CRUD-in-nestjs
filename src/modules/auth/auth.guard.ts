@@ -20,8 +20,8 @@ export class AuthGuard implements CanActivate {
       return true
     }
     const request = context.switchToHttp().getRequest()
-    const sessionId = request.sessionID
-
+    const sessionId = request.headers['x-session-id'] || request.sessionID
+    
     const user = await new Promise<any>((resolve, reject) => {
       request.sessionStore.get(sessionId, (error, sessionData) => {
         if (error) {

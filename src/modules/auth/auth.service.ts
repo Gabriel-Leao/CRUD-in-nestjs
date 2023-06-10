@@ -25,7 +25,7 @@ export class AuthService {
             email: user.email,
           }
 
-          return { message: 'You have been successfully logged in.' }
+          return { sessionId: req.sessionID }
         } else {
           throw new HttpException(
             'User or password incorrect',

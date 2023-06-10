@@ -23,7 +23,7 @@ async function bootstrap() {
       secret: process.env.SECRET,
       resave: false,
       saveUninitialized: false,
-      cookie: { httpOnly: true },
+      cookie: { httpOnly: true, secure: true },
     })
   )
   const port = process.env.PORT
