@@ -7,8 +7,8 @@ import * as bcrypt from 'bcrypt'
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
-    return await this.prisma.user.findMany({
+  findAll() {
+    return this.prisma.user.findMany({
       select: {
         email: true,
         userName: true,

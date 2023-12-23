@@ -14,6 +14,7 @@ export class RoleGuard implements CanActivate {
     if (!role) {
       return true
     }
+
     const request = context.switchToHttp().getRequest()
     const sessionId = request.headers['x-session-id'] || request.sessionID
 

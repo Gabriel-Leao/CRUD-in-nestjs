@@ -14,7 +14,6 @@ import { UserService } from './user.service'
 import { UserDto } from './user.dto'
 import { Role } from '../auth/role/role.decorator'
 import { RoleGuard } from '../auth/role/role.guard'
-import { Public } from '../auth/auth.decorator'
 
 @Controller('user')
 export class UserController {
